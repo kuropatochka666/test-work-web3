@@ -93,20 +93,15 @@ export class OrderService {
                            on o1."tokenA" = o2."tokenB" and o1."tokenB" = o2."tokenA" and
                               o1."amountA" = o2."amountB" and o1."amountB" = o2."amountA"
        where o1."isCancelled" = false
-          or o2."isCancelled" = false`,
+          and o2."isCancelled" = false`,
     );
   }
 
   async executeOrderMatch(match: OrderMatchDto): Promise<any> {
     const contract = await this.getContract();
-    contract.options.jsonInterface.map((value) =>
-      console.log('value ', value.name, value.inputs, value.outputs),
-    );
-    console.log(match);
     const firstOrderMatch = await this.orderRepository.findOneBy({
       orderId: match.orderId,
     });
-    console.log(firstOrderMatch);
     try {
       const order = await contract.methods
         .matchOrders(
